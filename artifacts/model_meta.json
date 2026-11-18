@@ -1,6 +1,6 @@
 {
-  "kind": "lightgbm",
-  "file": "model.txt",
+  "kind": "joblib",
+  "file": "model.joblib",
   "features": [
     "d",
     "d_rank",
@@ -30,18 +30,9 @@
     "dt_prev",
     "dt_next"
   ],
-  "params": {
-    "n_estimators": 252,
-    "learning_rate": 0.05958389350068958,
-    "num_leaves": 50,
-    "min_child_samples": 23,
-    "subsample": 0.8059264473611898,
-    "colsample_bytree": 0.4836963163912251,
-    "reg_lambda": 0.023592770353071287,
-    "max_depth": 8,
-    "subsample_freq": 1
-  },
-  "lightgbm_version": "4.7.0",
+  "algorithm": "XGBoost",
+  "config": "300 trees, lr=0.05, max_depth=6, subsample=0.8, colsample=0.8, hist",
+  "xgboost_version": "3.2.0",
   "radius": 50.0,
   "max_k": 12
 }

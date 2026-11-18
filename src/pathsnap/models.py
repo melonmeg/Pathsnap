@@ -17,6 +17,10 @@ def make_models(seed=C.SEED, n_jobs=-1):
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import StandardScaler
 
+    def _xgb():
+        from xgboost import XGBClassifier
+        return XGBClassifier
+
     def _trees():
         from sklearn.ensemble import ExtraTreesClassifier, HistGradientBoostingClassifier, RandomForestClassifier
         return ExtraTreesClassifier, HistGradientBoostingClassifier, RandomForestClassifier
@@ -38,7 +42,12 @@ def make_models(seed=C.SEED, n_jobs=-1):
                                                                         max_leaf_nodes=31, random_state=seed))
     m["LightGBM"] = ("Boosting (GBDT)", "300 trees, lr=0.05, num_leaves=31, subsample=0.8, colsample=0.8",
                      lambda: LGBMClassifier(**LGBM_DEFAULT, random_state=seed, n_jobs=n_jobs, verbose=-1))
-    m["MLP"] = ("Neural network", "StandardScaler, (64,32) ReLU, adam, alpha=1e-4, batch=1024, early stopping",
+    m["XGBoost"] = ("Boosting (XGBoost)",
+                    "300 trees, lr=0.05, max_depth=6, subsample=0.8, colsample=0.8, hist",
+                    lambda: _xgb()(n_estimators=300, learning_rate=0.05, max_depth=6, subsample=0.8,
+                                   colsample_bytree=0.8, tree_method="hist", eval_metric="logloss",
+                                   n_jobs=n_jobs, random_state=seed))
+    m["MLP"] = ("Neural network","StandardScaler, (64,32) ReLU, adam, alpha=1e-4, batch=1024, early stopping",
                 lambda: make_pipeline(StandardScaler(),
                                       MLPClassifier(hidden_layer_sizes=(64, 32), batch_size=1024, max_iter=40,
                                                     early_stopping=True, n_iter_no_change=5, random_state=seed)))
