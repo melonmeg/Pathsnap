@@ -11,7 +11,7 @@ import numpy as np
 
 from . import config as C
 from .features import build_candidate_table, feature_matrix
-from .hmm import viterbi
+from .hmm import fill_route, viterbi
 from .io import Trip
 from .network import Network
 
@@ -99,7 +99,9 @@ def trip_from_parsed(parsed: Mapping[str, Any], trip_id: str = "upload") -> Trip
     track_array = np.column_stack((gps[:, 0], gps[:, 1], track))
     nodes = np.asarray(parsed["nodes"], dtype=np.float64)
     arcs = np.asarray(parsed["arcs"], dtype=np.int64).reshape(-1, 2)
-    return Trip(trip_id, track_array, nodes, arcs, np.asarray(parsed["route_arc_ids"], dtype=np.int64))
+    # Ground-truth route IDs are retained by the API for display/evaluation only.
+    # Inference receives no reference route.
+    return Trip(trip_id, track_array, nodes, arcs, None)
 
 
 def predict_parsed_trip(parsed: Mapping[str, Any], bundle: ModelBundle | None = None, use_hmm: bool = True) -> dict:
@@ -137,9 +139,9 @@ def predict_parsed_trip(parsed: Mapping[str, Any], bundle: ModelBundle | None = 
     else:
         rows = chosen
     pred = np.where(rows >= 0, arc[np.maximum(rows, 0)], -1)
-    # Keep exactly the HMM-selected arc sequence. Do not bridge gaps or replace
-    # low-confidence predictions with reference-route or nearest-road values.
-    route = [int(a) for a in pred if a >= 0]
+    # Reconstruct a connected route from model-selected arcs using only the
+    # road network. This does not read or substitute the reference route.
+    route = fill_route(net, pred)
 
     return {
         "route_arc_ids": [int(a) for a in route],

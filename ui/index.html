@@ -40,14 +40,14 @@
   <div class="shell">
     <aside>
       <h1>PathSnap Trip Viewer</h1>
-      <p class="subtitle">Choose a test dataset ID or upload one complete trip.</p>
+      <p class="subtitle">Choose an evaluator dataset ID or upload one complete trip.</p>
       <form id="upload">
         <div class="mode">
-          <label><input type="radio" name="source" value="dataset" checked> Test dataset ID</label>
+          <label><input type="radio" name="source" value="dataset" checked> Evaluator dataset ID</label>
           <label><input type="radio" name="source" value="upload"> Upload files</label>
         </div>
         <div id="dataset-mode" class="dataset-mode">
-          <label class="drop"><strong>Dataset ID</strong><input id="dataset-id" name="dataset_id" inputmode="numeric" pattern="[0-9]{8}" placeholder="e.g. 00000000"></label>
+          <label class="drop"><strong>Dataset ID</strong><input id="dataset-id" name="dataset_id" inputmode="numeric" pattern="[0-9]{8}" placeholder="e.g. 00000015"></label>
           <p class="hint">Valid IDs: <span id="valid-ids">loading...</span></p>
         </div>
         <div id="upload-mode">
@@ -120,7 +120,7 @@
       if (source === 'dataset') {
         const datasetId = document.getElementById('dataset-id').value.trim();
         if (!validDatasetIds.includes(datasetId)) {
-          setStatus('Enter one of the valid test dataset IDs.', true);
+          setStatus('Enter one of the valid evaluator dataset IDs.', true);
           return;
         }
         await analyze('/trip/analyze-by-id', { dataset_id: datasetId });

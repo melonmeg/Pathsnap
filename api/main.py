@@ -26,7 +26,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-TEST_DATASET_DIR = ROOT / "dataset" / "test"
+TEST_DATASET_DIR = ROOT / "dataset" / "evaluator_test"
 TRIP_FILE_EXTENSIONS = ("track", "nodes", "arcs", "route")
 
 
